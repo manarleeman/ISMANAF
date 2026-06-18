@@ -1,302 +1,659 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISMANAF LTD - Building Vision, Designing Legacy</title>
-    <meta name="description" content="Nigerian-owned architecture and construction company with 10+ years of experience delivering timeless structures.">
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BATCOM // CLASSIFIED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#080406;
+    --ink:#0e0709;
+    --oxblood:#1a090c;
+    --red:#e10f1f;
+    --red-hot:#ff2b3a;
+    --red-glow:rgba(225,15,31,.55);
+    --bone:#ece4dc;
+    --bone-dim:#9c9089;
+    --amber:#f0a92c;
+    --glass:rgba(28,12,15,.42);
+    --glass-line:rgba(225,15,31,.28);
+    --display:'Anton',sans-serif;
+    --type:'Special Elite',serif;
+    --mono:'Share Tech Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:var(--mono);
+    background:
+      radial-gradient(120% 80% at 50% -10%, #2a0c12 0%, var(--oxblood) 32%, var(--void) 78%);
+    color:var(--bone);
+    overflow-x:hidden;
+    min-height:100vh;
+    min-height:100dvh;
+    -webkit-tap-highlight-color:transparent;
+    position:relative;
+  }
+  /* film grain + vignette */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
+    background:radial-gradient(130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,.6) 100%);
+    mix-blend-mode:multiply;
+  }
+  .scanlines{position:fixed;inset:0;pointer-events:none;z-index:61;opacity:.35;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 2px 3px);}
+  canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .ember{position:fixed;z-index:1;width:3px;height:3px;border-radius:50%;
+    background:var(--red-hot);pointer-events:none;
+    box-shadow:0 0 6px 1px var(--red-glow);opacity:0}
+
+  /* ---- screen system ---- */
+  .screen{position:relative;z-index:5;min-height:100vh;min-height:100dvh;
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    padding:clamp(20px,6vw,60px);text-align:center}
+  .screen.live{display:flex;animation:screenIn .9s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes screenIn{from{opacity:0;transform:translateY(18px) scale(.99);filter:blur(6px)}
+    to{opacity:1;transform:none;filter:none}}
+
+  /* ---- shared bits ---- */
+  .eyebrow{font-family:var(--mono);letter-spacing:.42em;font-size:clamp(10px,2.6vw,13px);
+    color:var(--red-hot);text-transform:uppercase;display:inline-flex;gap:.7em;align-items:center;
+    padding:7px 16px;border:1px solid var(--glass-line);border-radius:999px;
+    background:rgba(225,15,31,.06);text-shadow:0 0 10px var(--red-glow)}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--red-hot);
+    box-shadow:0 0 8px 2px var(--red-glow);animation:blink 1.4s steps(2) infinite}
+  @keyframes blink{50%{opacity:.15}}
+
+  .glow-btn{font-family:var(--display);letter-spacing:.14em;font-size:clamp(17px,4.4vw,22px);
+    color:var(--bone);background:linear-gradient(180deg,#2a0a0e,#160508);
+    border:1.5px solid var(--red);border-radius:14px;padding:18px 34px;cursor:pointer;
+    text-transform:uppercase;position:relative;overflow:hidden;transition:transform .25s,box-shadow .3s;
+    box-shadow:0 0 0 rgba(225,15,31,0),inset 0 0 22px rgba(225,15,31,.12);
+    animation:btnPulse 2.6s ease-in-out infinite}
+  .glow-btn::before{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;
+    background:linear-gradient(105deg,transparent,rgba(255,80,90,.35),transparent);
+    transform:skewX(-18deg);animation:sheen 3.4s ease-in-out infinite}
+  @keyframes sheen{0%,55%{left:-120%}80%,100%{left:160%}}
+  @keyframes btnPulse{0%,100%{box-shadow:0 0 18px var(--red-glow),inset 0 0 22px rgba(225,15,31,.12)}
+    50%{box-shadow:0 0 42px var(--red-glow),inset 0 0 30px rgba(225,15,31,.22)}}
+  .glow-btn:hover{transform:translateY(-3px) scale(1.03);
+    box-shadow:0 0 60px var(--red-glow),inset 0 0 34px rgba(225,15,31,.3);color:#fff}
+  .glow-btn:active{transform:translateY(0) scale(.98)}
+  .glow-btn:focus-visible{outline:2px dashed var(--amber);outline-offset:4px}
+
+  /* ---- BOOT / LANDING ---- */
+  #boot{gap:26px}
+  .terminal{font-family:var(--mono);font-size:clamp(11px,2.9vw,13.5px);color:var(--red-hot);
+    text-align:left;min-height:96px;max-width:520px;width:100%;
+    text-shadow:0 0 8px var(--red-glow);line-height:1.9;opacity:.85}
+  .terminal .ok{color:var(--amber)}
+  .welcome{max-width:640px;display:flex;flex-direction:column;align-items:center;gap:20px;
+    opacity:0;transform:translateY(14px);transition:opacity 1s,transform 1s}
+  .welcome.show{opacity:1;transform:none}
+  .bat-mark{width:clamp(78px,20vw,108px);filter:drop-shadow(0 0 22px var(--red-glow));
+    animation:hover 5s ease-in-out infinite}
+  @keyframes hover{50%{transform:translateY(-9px)}}
+  h1.title{font-family:var(--display);font-size:clamp(34px,9vw,64px);line-height:.94;
+    letter-spacing:.02em;color:var(--bone);text-transform:uppercase}
+  h1.title b{color:var(--red-hot);text-shadow:0 0 26px var(--red-glow);display:block}
+  .lede{font-family:var(--type);font-size:clamp(14px,3.8vw,18px);color:var(--bone-dim);
+    line-height:1.7;max-width:30ch}
+  .lede em{color:var(--bone);font-style:normal;border-bottom:1px solid var(--glass-line)}
+
+  /* ---- DASHBOARD ---- */
+  #dashboard{justify-content:flex-start;padding-top:clamp(34px,9vw,70px);gap:8px}
+  .dash-head{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:30px}
+  .dash-head h2{font-family:var(--display);font-size:clamp(24px,6.4vw,42px);text-transform:uppercase;
+    letter-spacing:.04em;color:var(--bone)}
+  .dash-head h2 span{color:var(--red-hot);text-shadow:0 0 20px var(--red-glow)}
+  .dash-sub{font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--bone-dim);text-transform:uppercase}
+  .files{display:grid;grid-template-columns:1fr;gap:16px;width:100%;max-width:760px}
+  @media(min-width:640px){.files{grid-template-columns:1fr 1fr}}
+
+  .file{position:relative;text-align:left;cursor:pointer;border-radius:16px;padding:22px 20px 20px;
+    background:var(--glass);backdrop-filter:blur(14px) saturate(120%);-webkit-backdrop-filter:blur(14px) saturate(120%);
+    border:1px solid var(--glass-line);overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;
+    box-shadow:0 10px 34px rgba(0,0,0,.45)}
+  .file::before{content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(225,15,31,.1),transparent 42%);opacity:.7;pointer-events:none}
+  .file:hover{transform:translateY(-6px);border-color:var(--red);
+    box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 30px var(--red-glow)}
+  .file:focus-visible{outline:2px dashed var(--amber);outline-offset:3px}
+  .file .fid{font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:var(--red-hot);
+    text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+  .file .fid .lvl{color:var(--bone-dim)}
+  .file .ftitle{font-family:var(--display);font-size:clamp(19px,5vw,26px);text-transform:uppercase;
+    letter-spacing:.02em;margin:12px 0 8px;color:var(--bone);line-height:1.05}
+  .file .fhint{font-family:var(--type);font-size:13px;color:var(--bone-dim);line-height:1.5}
+  .file .corner{position:absolute;top:12px;right:14px;font-size:14px;opacity:.85}
+  .file.locked{border-style:dashed;opacity:.96}
+  .file.locked .ftitle{color:var(--bone-dim)}
+  .file.opened{border-color:var(--amber)}
+  .file .stamp-mini{position:absolute;bottom:14px;right:14px;font-family:var(--display);
+    font-size:11px;letter-spacing:.18em;color:var(--red);border:1.5px solid var(--red);
+    padding:2px 7px;border-radius:3px;transform:rotate(-9deg);opacity:.55}
+
+  /* ---- FILE MODAL ---- */
+  .overlay{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;
+    padding:18px;background:rgba(4,2,3,.78);backdrop-filter:blur(4px)}
+  .overlay.live{display:flex;animation:fade .3s both}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .doc{position:relative;width:100%;max-width:520px;max-height:88vh;overflow:auto;border-radius:18px;
+    background:linear-gradient(180deg,rgba(26,9,12,.96),rgba(12,6,8,.97));
+    border:1px solid var(--red);box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 50px var(--red-glow);
+    padding:26px 24px 30px;animation:docIn .45s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes docIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+  .doc .close{position:absolute;top:12px;right:14px;width:34px;height:34px;border-radius:9px;
+    border:1px solid var(--glass-line);background:rgba(225,15,31,.08);color:var(--bone);
+    font-size:18px;cursor:pointer;line-height:1;transition:.2s}
+  .doc .close:hover{background:var(--red);color:#fff}
+  .doc .dhead{font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:var(--red-hot);
+    text-transform:uppercase;border-bottom:1px dashed var(--glass-line);padding-bottom:12px;
+    display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .doc h3{font-family:var(--display);font-size:clamp(22px,6vw,30px);text-transform:uppercase;
+    letter-spacing:.02em;margin:18px 0 4px;color:var(--bone)}
+  .typewrap{font-family:var(--type);font-size:clamp(14px,3.8vw,16.5px);line-height:1.85;
+    color:var(--bone);min-height:120px;white-space:pre-wrap}
+  .typewrap .label{color:var(--amber);text-transform:uppercase;font-size:12px;letter-spacing:.1em}
+  .typewrap .caret{color:var(--red-hot);animation:blink 1s steps(2) infinite}
+  .redact{background:#000;color:transparent;border-radius:2px;padding:0 4px;cursor:pointer;
+    transition:.4s;user-select:none}
+  .redact.revealed{background:transparent;color:var(--red-hot);text-shadow:0 0 8px var(--red-glow)}
+  .stamp{position:absolute;font-family:var(--display);letter-spacing:.16em;border:3px solid var(--red);
+    color:var(--red);padding:6px 14px;border-radius:6px;text-transform:uppercase;
+    transform:rotate(-13deg);opacity:0;font-size:clamp(15px,4.4vw,20px);
+    box-shadow:0 0 18px var(--red-glow);text-shadow:0 0 12px var(--red-glow);pointer-events:none}
+  .stamp.hit{animation:stampHit .5s cubic-bezier(.2,1.4,.3,1) both}
+  @keyframes stampHit{0%{opacity:0;transform:rotate(-13deg) scale(2.4)}
+    60%{opacity:.95;transform:rotate(-13deg) scale(.9)}100%{opacity:.88;transform:rotate(-13deg) scale(1)}}
+
+  /* unlock panel */
+  .unlock-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;padding:16px 0 4px}
+  .lock-ico{font-size:40px;filter:drop-shadow(0 0 16px var(--red-glow))}
+  .meter{width:100%;max-width:280px;height:8px;border-radius:99px;background:rgba(225,15,31,.12);
+    border:1px solid var(--glass-line);overflow:hidden}
+  .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--amber));
+    transition:width .9s ease}
+  .meter-label{font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--bone-dim);text-transform:uppercase}
+
+  /* ---- FINALE ---- */
+  #finale{justify-content:center;gap:8px}
+  .signal{position:relative;width:min(78vw,320px);height:min(78vw,320px);margin-bottom:8px;
+    display:flex;align-items:center;justify-content:center}
+  .signal .halo{position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(circle, rgba(255,80,90,.42) 0%, rgba(225,15,31,.16) 40%, transparent 70%);
+    animation:halo 3.4s ease-in-out infinite}
+  @keyframes halo{50%{transform:scale(1.12);opacity:.7}}
+  .signal .beam{position:absolute;bottom:46%;left:50%;width:6px;height:60vh;
+    transform-origin:bottom center;
+    background:linear-gradient(to top, rgba(255,90,100,.5), transparent 78%);
+    filter:blur(2px)}
+  .signal .beam.b1{transform:translateX(-50%) rotate(-18deg)}
+  .signal .beam.b2{transform:translateX(-50%) rotate(18deg)}
+  .signal .beam{animation:sweep 6s ease-in-out infinite}
+  .signal .beam.b2{animation-delay:-3s}
+  @keyframes sweep{0%,100%{opacity:.25}50%{opacity:.6}}
+  .signal svg{position:relative;width:54%;filter:drop-shadow(0 0 26px var(--red-glow));
+    animation:sigPulse 2.8s ease-in-out infinite}
+  @keyframes sigPulse{50%{filter:drop-shadow(0 0 46px var(--red-hot))}}
+  .letter{max-width:560px;background:var(--glass);backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);border:1px solid var(--glass-line);border-radius:18px;
+    padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .letter .to{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--red-hot);
+    text-transform:uppercase;margin-bottom:14px;display:block}
+  #finalType{font-family:var(--type);font-size:clamp(14px,3.9vw,17px);line-height:1.95;
+    color:var(--bone);white-space:pre-wrap;min-height:200px}
+  #finalType .heart{color:var(--red-hot);text-shadow:0 0 12px var(--red-glow)}
+  #finalType .caret{color:var(--red-hot);animation:blink 1s steps(2) infinite}
+  .finale-btn-wrap{margin-top:26px;opacity:0;transition:opacity .8s}
+  .finale-btn-wrap.show{opacity:1}
+
+  /* ---- ENDCARD ---- */
+  #endcard{gap:22px}
+  #endcard .big{font-family:var(--display);font-size:clamp(40px,13vw,96px);text-transform:uppercase;
+    color:var(--bone);letter-spacing:.02em;line-height:.9;
+    text-shadow:0 0 40px var(--red-glow);animation:popText .8s cubic-bezier(.2,1.5,.3,1) both}
+  #endcard .big b{color:var(--red-hot)}
+  @keyframes popText{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  #endcard .sub{font-family:var(--type);color:var(--bone-dim);font-size:15px;max-width:30ch;line-height:1.7}
+
+  /* ---- TOAST / easter eggs ---- */
+  #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(140%);
+    z-index:70;max-width:min(86vw,420px);padding:14px 18px;border-radius:13px;
+    font-family:var(--type);font-size:14px;line-height:1.5;color:var(--bone);
+    background:rgba(20,8,10,.92);backdrop-filter:blur(10px);border:1px solid var(--red);
+    box-shadow:0 16px 40px rgba(0,0,0,.6),0 0 26px var(--red-glow);
+    transition:transform .5s cubic-bezier(.2,.9,.2,1);text-align:center}
+  #toast.show{transform:translateX(-50%) translateY(0)}
+  #toast .tlabel{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;
+    color:var(--red-hot);text-transform:uppercase;margin-bottom:5px}
+
+  /* ---- secret bat ---- */
+  #secretBat{position:fixed;z-index:55;width:24px;height:24px;cursor:pointer;opacity:.16;
+    transition:opacity .3s,transform .3s;filter:drop-shadow(0 0 6px var(--red-glow))}
+  #secretBat:hover{opacity:.9;transform:scale(1.25)}
+  #secretBat svg{width:100%;height:100%}
+
+  .footer-note{position:fixed;bottom:8px;left:0;right:0;text-align:center;z-index:30;
+    font-family:var(--mono);font-size:9px;letter-spacing:.28em;color:rgba(156,144,137,.4);
+    text-transform:uppercase;pointer-events:none}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001s !important;animation-iteration-count:1 !important;
+      transition-duration:.12s !important}
+    .glow-btn::before{display:none}
+  }
+</style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <h2>ISMANAF LTD</h2>
-                <span class="logo-tagline">Building Vision, Designing Legacy</span>
-            </div>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#services" class="nav-link">Services</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
+<canvas id="rain"></canvas>
+<div class="scanlines"></div>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-video">
-            <div class="hero-overlay"></div>
-            <div class="hero-background"></div>
-        </div>
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="company-name">ISMANAF LTD</span>
-                <span class="hero-subtitle">Architecture. Construction. Excellence.</span>
-            </h1>
-            <p class="hero-description">10+ Years Building Nigeria's Future</p>
-            <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="scrollToSection('projects')">View Projects</button>
-                <button class="btn btn-secondary" onclick="scrollToSection('contact')">Let's Work Together</button>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <div class="scroll-arrow"></div>
-        </div>
-    </section>
+<!-- ============ BOOT / LANDING ============ -->
+<section id="boot" class="screen live">
+  <div class="eyebrow"><span class="dot"></span>⚠ BATCOM SECURE NETWORK ⚠</div>
+  <pre class="terminal" id="terminal"></pre>
+  <div class="welcome" id="welcome">
+    <svg class="bat-mark" viewBox="0 0 120 56" aria-hidden="true">
+      <path fill="#e10f1f" d="M60 4c2 7 6 11 12 12 0-5 4-9 9-9-1 4 0 7 3 9 6-4 14-5 21-3-5 3-8 8-9 14 7-2 14 0 19 5-7 0-12 4-15 10 5 0 9 2 12 6-9-3-19-1-27 5-7 5-12 12-25 12s-18-7-25-12c-8-6-18-8-27-5 3-4 7-6 12-6-3-6-8-10-15-10 5-5 12-7 19-5-1-6-4-11-9-14 7-2 15-1 21 3 3-2 4-5 3-9 5 0 9 4 9 9 6-1 10-5 12-12z"/>
+    </svg>
+    <h1 class="title">Welcome Back,<b>Detective Muhammad.</b></h1>
+    <p class="lede">Gotham has been unusually quiet lately…<br><br>
+      I think it's because I've been <em>missing my favorite vigilante</em>.</p>
+    <button class="glow-btn" id="enterBtn">⛓ Enter Gotham</button>
+  </div>
+</section>
 
-    <!-- Services Section -->
-    <section id="services" class="services">
-        <div class="container">
-            <h2 class="section-title">What We Do</h2>
-            <div class="services-grid">
-                <div class="service-card" data-aos="fade-up">
-                    <div class="service-icon">
-                        <i class="fas fa-drafting-compass"></i>
-                    </div>
-                    <h3>Architecture Design</h3>
-                    <p>We don't just draw buildings — we bring visionary concepts to life with innovative design solutions.</p>
-                </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-icon">
-                        <i class="fas fa-hard-hat"></i>
-                    </div>
-                    <h3>Construction Management</h3>
-                    <p>Expert project management ensuring quality, timeline adherence, and budget optimization for every build.</p>
-                </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <h3>Design & Build Services</h3>
-                    <p>Comprehensive end-to-end solutions from initial concept to final construction delivery.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ============ DASHBOARD ============ -->
+<section id="dashboard" class="screen">
+  <div class="dash-head">
+    <div class="eyebrow"><span class="dot"></span>Clearance Verified — Welcome, Detective</div>
+    <h2>Classified <span>Files</span></h2>
+    <div class="dash-sub">Batwoman // Gotham Confidential Database</div>
+  </div>
+  <div class="files" id="files">
+    <!-- cards injected -->
+  </div>
+</section>
 
-    <!-- Projects Showcase -->
-    <section id="projects" class="projects">
-        <div class="container">
-            <h2 class="section-title">Our Projects</h2>
-            <div class="projects-filter">
-                <button class="filter-btn active" data-filter="all">All Projects</button>
-                <button class="filter-btn" data-filter="hotel">Hotels</button>
-                <button class="filter-btn" data-filter="residential">Residential</button>
-                <button class="filter-btn" data-filter="commercial">Commercial</button>
-            </div>
-            <div class="projects-grid">
-                <div class="project-card" data-category="hotel" data-aos="fade-up">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Porto Golf Hotel">
-                        <div class="project-overlay">
-                            <h3>Porto Golf Hotel</h3>
-                            <p>Luxury hospitality redefined</p>
-                            <button class="view-project" onclick="openProjectModal('porto-golf')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card" data-category="residential" data-aos="fade-up" data-aos-delay="100">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Luxury Residence">
-                        <div class="project-overlay">
-                            <h3>Luxury Residence</h3>
-                            <p>Contemporary living spaces</p>
-                            <button class="view-project" onclick="openProjectModal('luxury-residence')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card" data-category="commercial" data-aos="fade-up" data-aos-delay="200">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Corporate Center">
-                        <div class="project-overlay">
-                            <h3>Corporate Center</h3>
-                            <p>Modern business architecture</p>
-                            <button class="view-project" onclick="openProjectModal('corporate-center')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card" data-category="residential" data-aos="fade-up" data-aos-delay="300">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Modern Villa">
-                        <div class="project-overlay">
-                            <h3>Modern Villa</h3>
-                            <p>Architectural excellence</p>
-                            <button class="view-project" onclick="openProjectModal('modern-villa')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ============ FILE MODAL ============ -->
+<div class="overlay" id="overlay">
+  <div class="doc" id="doc">
+    <button class="close" id="docClose" aria-label="Close file">✕</button>
+    <div class="dhead" id="docHead"></div>
+    <div id="docBody"></div>
+    <span class="stamp" id="docStamp"></span>
+  </div>
+</div>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text" data-aos="fade-right">
-                    <h2 class="section-title">About Us / Legacy</h2>
-                    <p class="about-description">
-                        Founded over a decade ago, ISMANAF LTD is a Nigerian-owned architecture and construction company dedicated to delivering timeless structures that speak of quality, integrity, and craftsmanship.
-                    </p>
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-year">2012</div>
-                            <div class="timeline-content">
-                                <h4>Company Founded</h4>
-                                <p>Established with a vision to transform Nigeria's architectural landscape</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-year">2018</div>
-                            <div class="timeline-content">
-                                <h4>Major Expansion</h4>
-                                <p>Expanded operations and completed 400+ residential projects</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-year">2025</div>
-                            <div class="timeline-content">
-                                <h4>Industry Leadership</h4>
-                                <p>Recognized as a leading architecture and construction firm in Nigeria</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="about-image" data-aos="fade-left">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Founder">
-                    <div class="founder-info">
-                        <h4>Our Founder</h4>
-                        <p>Leading with vision and expertise</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials">
-        <div class="container">
-            <h2 class="section-title">Client Testimonials</h2>
-            <div class="testimonials-grid">
-                <div class="testimonial-card" data-aos="fade-up">
-                    <div class="testimonial-content">
-                        <p>"They turned our vision into reality — on time, and beyond expectations."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80" alt="Client">
-                        <div class="author-info">
-                            <h4>Chief Executive</h4>
-                            <span>Lagos Business District</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="testimonial-content">
-                        <p>"Exceptional craftsmanship and attention to detail. ISMANAF LTD exceeded all our expectations."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <img src="https://images.unsplash.com/photo-1494790108755-2616b9c2e1e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80" alt="Client">
-                        <div class="author-info">
-                            <h4>Property Developer</h4>
-                            <span>Abuja</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2 class="section-title">Contact Us</h2>
-            <div class="contact-content">
-                <div class="contact-info" data-aos="fade-right">
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <div>
-                            <h4>Phone</h4>
-                            <p>+234 803 123 4567</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <h4>Email</h4>
-                            <p>info@ismanafltd.com</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <h4>Location</h4>
-                            <p>Kano state, Nigeria</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fab fa-whatsapp"></i>
-                        <div>
-                            <h4>WhatsApp</h4>
-                            <p>+234 803 123 4567</p>
-                        </div>
-                    </div>
-                </div>
-                <form class="contact-form" data-aos="fade-left">
-                    <div class="form-group">
-                        <input type="text" id="name" name="name" placeholder="Your Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="email" name="email" placeholder="Your Email" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Send Message</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <h3>ISMANAF LTD</h3>
-                    <p>Building Vision, Designing Legacy</p>
-                </div>
-                <div class="footer-links">
-                    <a href="#home">Home</a>
-                    <a href="#services">Services</a>
-                    <a href="#projects">Projects</a>
-                    <a href="#about">About</a>
-                    <a href="#contact">Contact</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 ISMANAF LTD. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Project Modal -->
-    <div id="projectModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeProjectModal()">&times;</span>
-            <div id="modalContent"></div>
-        </div>
+<!-- ============ FINALE ============ -->
+<section id="finale" class="screen">
+  <div class="signal" id="signal">
+    <div class="halo"></div>
+    <div class="beam b1"></div>
+    <div class="beam b2"></div>
+    <svg viewBox="0 0 120 56" aria-hidden="true">
+      <path fill="#ff2b3a" d="M60 4c2 7 6 11 12 12 0-5 4-9 9-9-1 4 0 7 3 9 6-4 14-5 21-3-5 3-8 8-9 14 7-2 14 0 19 5-7 0-12 4-15 10 5 0 9 2 12 6-9-3-19-1-27 5-7 5-12 12-25 12s-18-7-25-12c-8-6-18-8-27-5 3-4 7-6 12-6-3-6-8-10-15-10 5-5 12-7 19-5-1-6-4-11-9-14 7-2 15-1 21 3 3-2 4-5 3-9 5 0 9 4 9 9 6-1 10-5 12-12z"/>
+    </svg>
+  </div>
+  <div class="letter">
+    <span class="to">// Encrypted Transmission — For Detective Muhammad Only</span>
+    <div id="finalType"></div>
+    <div class="finale-btn-wrap" id="finaleBtnWrap">
+      <button class="glow-btn" id="returnBtn">❤ Return to Batwoman</button>
     </div>
+  </div>
+</section>
 
-    <script src="script.js"></script>
+<!-- ============ ENDCARD ============ -->
+<section id="endcard" class="screen">
+  <div class="eyebrow"><span class="dot"></span>Transmission Received</div>
+  <div class="big">About<b>Time.</b></div>
+  <p class="sub">Case status updated: <span style="color:var(--amber)">no longer pretending I don't miss you.</span></p>
+  <button class="glow-btn" id="replayBtn">↺ Reopen the Files</button>
+</section>
+
+<!-- secret bat -->
+<div id="secretBat" title="...what's that?">
+  <svg viewBox="0 0 120 56" aria-hidden="true"><path fill="#e10f1f" d="M60 4c2 7 6 11 12 12 0-5 4-9 9-9-1 4 0 7 3 9 6-4 14-5 21-3-5 3-8 8-9 14 7-2 14 0 19 5-7 0-12 4-15 10 5 0 9 2 12 6-9-3-19-1-27 5-7 5-12 12-25 12s-18-7-25-12c-8-6-18-8-27-5 3-4 7-6 12-6-3-6-8-10-15-10 5-5 12-7 19-5-1-6-4-11-9-14 7-2 15-1 21 3 3-2 4-5 3-9 5 0 9 4 9 9 6-1 10-5 12-12z"/></svg>
+</div>
+
+<div id="toast"><span class="tlabel">Intercepted Signal</span><span id="toastMsg"></span></div>
+<div class="footer-note">Property of Batwoman // unauthorized hearts will be prosecuted</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------------- RAIN ---------------- */
+(function(){
+  const c = $('#rain'), x = c.getContext('2d');
+  let drops=[], W,H,intensity=1;
+  function size(){W=c.width=innerWidth;H=c.height=innerHeight;
+    const n = reduce?40:Math.floor(W/7);
+    drops=[];for(let i=0;i<n;i++)drops.push(mk());}
+  function mk(){return{x:Math.random()*W,y:Math.random()*H,l:Math.random()*16+8,
+    v:Math.random()*5+5,o:Math.random()*.4+.15};}
+  function loop(){
+    x.clearRect(0,0,W,H);
+    x.lineCap='round';
+    for(const d of drops){
+      x.strokeStyle=`rgba(225,40,55,${d.o*intensity})`;
+      x.lineWidth=1.1;
+      x.beginPath();x.moveTo(d.x,d.y);x.lineTo(d.x-1,d.y+d.l);x.stroke();
+      d.y+=d.v*intensity;
+      if(d.y>H){d.y=-d.l;d.x=Math.random()*W;}
+    }
+    requestAnimationFrame(loop);
+  }
+  window.rainBoost = v => { intensity = v; };
+  addEventListener('resize',size); size();
+  if(!reduce) loop(); else { // single static frame
+    for(const d of drops){x.strokeStyle=`rgba(225,40,55,${d.o})`;x.beginPath();
+      x.moveTo(d.x,d.y);x.lineTo(d.x-1,d.y+d.l);x.stroke();}
+  }
+})();
+
+/* ---------------- EMBERS ---------------- */
+(function(){
+  if(reduce) return;
+  setInterval(()=>{
+    if(document.hidden) return;
+    const e=document.createElement('div');e.className='ember';
+    e.style.left=Math.random()*100+'vw';e.style.bottom='-10px';
+    const dur=6+Math.random()*6, drift=(Math.random()*60-30);
+    e.animate([
+      {transform:'translateY(0) translateX(0)',opacity:0},
+      {opacity:.8,offset:.15},
+      {transform:`translateY(-100vh) translateX(${drift}px)`,opacity:0}
+    ],{duration:dur*1000,easing:'linear'});
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),dur*1000);
+  },650);
+})();
+
+/* ---------------- BOOT TERMINAL ---------------- */
+const bootLines = [
+  ['> establishing secure uplink to gotham mainframe ...',1],
+  ['> bypassing GCPD firewall ........ <span class="ok">[OK]</span>',1],
+  ['> decrypting batwoman_private_drive ... <span class="ok">[OK]</span>',1],
+  ['> scanning for authorized detective ...',1],
+  ['> match found: <span class="ok">MUHAMMAD</span> ✓',1],
+  ['> emotional firewall status: <span class="ok">compromised</span>',1],
+  ['> loading classified feelings .........',1]
+];
+function runBoot(){
+  if(reduce){ $('#terminal').innerHTML = bootLines.map(l=>l[0]).join('\n');
+    $('#welcome').classList.add('show'); return; }
+  const t=$('#terminal'); let i=0;
+  (function next(){
+    if(i>=bootLines.length){ setTimeout(()=>$('#welcome').classList.add('show'),350); return; }
+    t.innerHTML += (i?'\n':'') + bootLines[i][0];
+    i++; setTimeout(next, 340);
+  })();
+}
+runBoot();
+
+/* ---------------- SCREEN NAV ---------------- */
+function goto(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('live'));
+  const el=$(id); el.classList.add('live');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+$('#enterBtn').addEventListener('click',()=>{ buildCards(); goto('#dashboard'); resetIdle(); });
+
+/* ---------------- FILE DATA ---------------- */
+let unlocked=false;
+const FILES=[
+  {id:'001',lvl:'CONFIDENTIAL',icon:'🖤',title:'Current Status',hint:'Subject behaving suspiciously.',
+   stamp:'UNDER REVIEW',
+   head:'FILE 001 // EMOTIONAL STATUS',
+   body:`<span class="label">Current Emotional Status:</span>
+Trying to act normal.
+Failing spectacularly.
+
+<span class="label">Additional Note:</span>
+Subject keeps randomly appearing in my thoughts.
+
+<span class="label">Verdict:</span> Investigation ongoing. [REDACTED:and probably never closing]`},
+
+  {id:'002',lvl:'WANTED',icon:'🖤',title:'Missing Person Report',hint:'Reward offered. See within.',
+   stamp:'WANTED',
+   head:'FILE 002 // MISSING PERSON',
+   body:`<span class="label">Name:</span> Detective Muhammad
+<span class="label">Last Seen:</span> Being unfairly cute.
+<span class="label">Current Status:</span> Wanted for stealing Batwoman's attention.
+
+<span class="label">Reward:</span>
+One very suspiciously long hug.
+[REDACTED:and maybe a forehead kiss if you behave]`},
+
+  {id:'003',lvl:'URGENT',icon:'🖤',title:'Emergency Broadcast',hint:'Gotham-wide alert issued.',
+   stamp:'CODE RED',
+   head:'FILE 003 // EMERGENCY ALERT',
+   body:`<span class="label">⚠ GOTHAM EMERGENCY ALERT ⚠</span>
+
+Subject has been caught smiling at old messages.
+
+Further investigation confirms:
+The situation is getting worse.
+
+<span class="label">Threat Level:</span> Catastrophically adorable. [REDACTED:send help. or just send yourself]`},
+
+  {id:'004',lvl:'TOP SECRET',icon:'🔒',title:'Top Secret',hint:'Access denied. Clearance required.',
+   locked:true,
+   head:'FILE 004 // TOP SECRET'}
+];
+
+function buildCards(){
+  const wrap=$('#files'); if(wrap.dataset.built) return; wrap.dataset.built='1';
+  FILES.forEach(f=>{
+    const card=document.createElement('button');
+    card.className='file'+(f.locked?' locked':'');
+    card.setAttribute('aria-label',`Open file ${f.id} ${f.title}`);
+    card.innerHTML=`
+      <div class="fid"><span>FILE ${f.id}</span><span class="lvl">${f.lvl}</span></div>
+      <div class="ftitle">${f.title}</div>
+      <div class="fhint">${f.hint}</div>
+      <span class="corner">${f.icon}</span>`;
+    card.addEventListener('click',()=>openFile(f,card));
+    wrap.appendChild(card);
+  });
+}
+
+/* ---------------- TYPEWRITER ---------------- */
+let typeTimer=null;
+function typeInto(node, html, done){
+  clearTimeout(typeTimer);
+  // tokenize into text + tag chunks so HTML tags appear instantly
+  const tokens=[]; let buf='';
+  for(let i=0;i<html.length;i++){
+    if(html[i]==='<'){ if(buf){tokens.push({t:'txt',v:buf});buf='';}
+      let tag=''; while(html[i]!=='>'&&i<html.length){tag+=html[i++];} tag+='>';
+      tokens.push({t:'tag',v:tag});
+    } else buf+=html[i];
+  }
+  if(buf)tokens.push({t:'txt',v:buf});
+  let out='', ti=0, ci=0;
+  const caret='<span class="caret">▌</span>';
+  function step(){
+    if(ti>=tokens.length){node.innerHTML=out; if(done)done(); return;}
+    const tok=tokens[ti];
+    if(tok.t==='tag'){ out+=tok.v; ti++; node.innerHTML=out+caret; return step(); }
+    if(ci<tok.v.length){ out+=tok.v[ci++]; node.innerHTML=out+caret; }
+    else { ci=0; ti++; }
+    typeTimer=setTimeout(step, reduce?0:14);
+  }
+  if(reduce){ node.innerHTML=html; if(done)done(); } else step();
+}
+
+/* ---------------- OPEN FILE ---------------- */
+function openFile(f,card){
+  const ov=$('#overlay'), head=$('#docHead'), body=$('#docBody'), stamp=$('#docStamp');
+  stamp.className='stamp'; stamp.textContent='';
+  head.innerHTML=`<span>${f.head}</span><span>${f.locked&&!unlocked?'🔒 LOCKED':'● OPEN'}</span>`;
+  ov.classList.add('live');
+
+  if(f.locked && !unlocked){
+    body.innerHTML=`
+      <h3>Access Denied</h3>
+      <div class="unlock-wrap">
+        <div class="lock-ico">🔒</div>
+        <p style="font-family:var(--type);color:var(--bone-dim);max-width:30ch;line-height:1.6">
+          Emotional clearance required to view this file.</p>
+        <div class="meter"><i id="meterBar"></i></div>
+        <div class="meter-label" id="meterLabel">clearance: 0%</div>
+        <button class="glow-btn" id="unlockBtn">🔓 Unlock</button>
+      </div>`;
+    $('#unlockBtn').addEventListener('click',runUnlock);
+  } else if(f.locked && unlocked){
+    body.innerHTML=`<h3>${f.title}</h3>
+      <div class="typewrap">Clearance granted. Redirecting to secure transmission…</div>`;
+    setTimeout(()=>{ closeFile(); rainBoost(1.6); goto('#finale'); playFinale(); },900);
+  } else {
+    body.innerHTML=`<h3>${f.title}</h3><div class="typewrap" id="tw"></div>`;
+    typeInto($('#tw'), f.body, ()=>{
+      stamp.textContent=f.stamp;
+      stamp.style.top=(20+Math.random()*40)+'%';
+      stamp.style.left=(46+Math.random()*22)+'%';
+      stamp.classList.add('hit');
+      wireRedactions();
+      if(card)card.classList.add('opened');
+    });
+  }
+}
+function wireRedactions(){
+  document.querySelectorAll('#docBody .redact').forEach(r=>{
+    r.addEventListener('click',()=>r.classList.add('revealed'),{once:true});
+  });
+}
+// turn [REDACTED:xxx] markers into clickable bars after typing — handle in typeInto output
+function closeFile(){ $('#overlay').classList.remove('live'); clearTimeout(typeTimer); }
+$('#docClose').addEventListener('click',closeFile);
+$('#overlay').addEventListener('click',e=>{ if(e.target===$('#overlay'))closeFile(); });
+
+/* convert redact markers: we post-process node html when typing completes is messy,
+   so instead pre-convert in body strings */
+FILES.forEach(f=>{ if(f.body){
+  f.body=f.body.replace(/\[REDACTED:(.*?)\]/g,'<span class="redact">$1</span>');
+}});
+
+/* ---------------- UNLOCK SEQUENCE ---------------- */
+function runUnlock(){
+  const btn=$('#unlockBtn'), bar=$('#meterBar'), lab=$('#meterLabel');
+  btn.disabled=true; btn.style.opacity=.5; btn.textContent='Verifying…';
+  const steps=[ [35,'analyzing heartbeat…'],[68,'cross-referencing late-night texts…'],
+                [88,'detecting butterflies…'],[100,'clearance: GRANTED ❤'] ];
+  let i=0;
+  (function nx(){
+    if(i>=steps.length){ unlocked=true;
+      setTimeout(()=>{ closeFile(); rainBoost(1.7); goto('#finale'); playFinale(); },650); return; }
+    bar.style.width=steps[i][0]+'%';
+    lab.textContent = steps[i][0]===100 ? steps[i][1] : 'clearance: '+steps[i][0]+'% — '+steps[i][1];
+    i++; setTimeout(nx, reduce?120:850);
+  })();
+}
+
+/* ---------------- FINALE ---------------- */
+const finalMsg =
+`Dear Detective Muhammad,
+
+I made this because talking normally is apparently too easy.
+So naturally I built an entire Gotham database instead.
+
+I just wanted to tell you that you've been on my mind.
+More than I'd like to admit.
+
+And if Gotham ever needed saving…
+I'd probably still choose spending time with you.
+
+<span class="heart">❤</span>`;
+let finalePlayed=false;
+function playFinale(){
+  const node=$('#finalType'); node.innerHTML='';
+  $('#finaleBtnWrap').classList.remove('show');
+  setTimeout(()=>typeInto(node, finalMsg, ()=>{
+    $('#finaleBtnWrap').classList.add('show');
+  }), reduce?0:600);
+  finalePlayed=true;
+}
+$('#returnBtn').addEventListener('click',()=>{ rainBoost(1); goto('#endcard'); });
+$('#replayBtn').addEventListener('click',()=>{ goto('#dashboard'); });
+
+/* ---------------- EASTER EGG TOASTS ---------------- */
+const eggs=[
+ "Still clicking?",
+ "Detective, your dedication to this investigation is concerning.",
+ "You miss me too, don't you?",
+ "This file has been accessed an unusually suspicious number of times.",
+ "Gotham suspects you're smiling right now.",
+ "Evidence suggests Batwoman likes you.",
+ "Please stop being cute. This is an active investigation.",
+ "Warning: Subject may cause butterflies.",
+ "Accessing this file increases missing-you levels by 73%.",
+ "Nice try. The answer is yes, I missed you.",
+ "You're still here? Interesting.",
+ "Batwoman has requested your immediate presence.",
+ "This database was definitely NOT built because someone was thinking about you.",
+ "Emotional damage detected.",
+ "Classified note: I smile when you text.",
+ "Confidential: You look good today.",
+ "This message will self-destruct in absolutely no seconds.",
+ "Unauthorized access to Batwoman's heart detected.",
+ 'You have unlocked: "Living rent-free in my head."'
+];
+let lastEgg=-1, eggLock=false;
+function popEgg(force){
+  if(eggLock && !force) return;
+  let i; do{ i=Math.floor(Math.random()*eggs.length); } while(i===lastEgg && eggs.length>1);
+  lastEgg=i;
+  const t=$('#toast'); $('#toastMsg').textContent=eggs[i];
+  t.classList.add('show'); eggLock=true;
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>eggLock=false,400); },3600);
+}
+// click anywhere occasionally
+let clicks=0;
+document.addEventListener('click',()=>{ clicks++; if(clicks%4===0) popEgg(); });
+// hover on cards / buttons
+document.addEventListener('mouseover',e=>{
+  if(e.target.closest('.file, .glow-btn') && Math.random()<0.22) popEgg();
+});
+// idle detection
+let idleTimer=null;
+function resetIdle(){ clearTimeout(idleTimer);
+  idleTimer=setTimeout(()=>{ popEgg(true); resetIdle(); }, 11000); }
+['mousemove','keydown','touchstart','click','scroll'].forEach(ev=>
+  addEventListener(ev,resetIdle,{passive:true}));
+resetIdle();
+
+/* ---------------- SECRET BAT ---------------- */
+function placeBat(){
+  const b=$('#secretBat');
+  const x=8+Math.random()*82, y=14+Math.random()*70;
+  b.style.left=x+'vw'; b.style.top=y+'vh';
+}
+placeBat();
+$('#secretBat').addEventListener('click',e=>{
+  e.stopPropagation();
+  const ov=$('#overlay'), head=$('#docHead'), body=$('#docBody'), stamp=$('#docStamp');
+  stamp.className='stamp'; stamp.textContent='';
+  head.innerHTML=`<span>??? // BURIED FILE</span><span style="color:var(--amber)">★ HIDDEN</span>`;
+  body.innerHTML=`<h3 style="color:var(--red-hot)">Top Secret File Found</h3>
+    <div class="typewrap" id="twSecret"></div>`;
+  ov.classList.add('live');
+  typeInto($('#twSecret'),
+    `Okay fine…\n\nI missed you.\nA lot.\n\n<span style="color:var(--red-hot);text-shadow:0 0 12px var(--red-glow)">❤</span>`,
+    ()=>{ stamp.textContent='OFF THE RECORD';
+      stamp.style.top='24%'; stamp.style.left='44%'; stamp.classList.add('hit'); });
+  setTimeout(placeBat,500); // relocate after found
+});
+
+/* relocate the bat occasionally so it stays a hunt */
+setInterval(()=>{ if(!$('#overlay').classList.contains('live')) placeBat(); }, 20000);
+</script>
 </body>
 </html>
